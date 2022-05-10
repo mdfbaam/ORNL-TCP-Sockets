@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(ORNL-TCP-Sockets LANGUAGES CXX)
+project(ORNL_TCP_Sockets LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
@@ -12,11 +12,14 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
 file(GLOB_RECURSE SOURCES "src/**.cpp")
 file(GLOB_RECURSE HEADERS "include/**.h")
 
-add_library(ORNL-TCP-Sockets STATIC
+add_library(ORNL_TCP_Sockets STATIC
   ${SOURCES}
   ${HEADERS}
 )
 
-target_link_libraries(ORNL-TCP-Sockets Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
+target_link_libraries(ORNL_TCP_Sockets Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
 
-target_compile_definitions(ORNL-TCP-Sockets PRIVATE ORNLTCPSOCKETS_LIBRARY)
+target_compile_definitions(ORNL_TCP_Sockets PRIVATE ORNLTCPSOCKETS_LIBRARY)
+
+set(ORNL_TCP_SOCKETS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include PARENT_SCOPE)
+set(ORNL_TCP_SOCKETS_LIB ORNL_TCP_Sockets PARENT_SCOPE)
