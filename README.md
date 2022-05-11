@@ -59,5 +59,5 @@ connect(client, &TCPConnection::disconnected, this, []()
     qDebug() << "Disconnected";
 });
 
-client->startAsync("localhost", 12345);
+client->setupNewAsync("localhost", 12345);
 ```
