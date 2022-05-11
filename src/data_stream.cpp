@@ -24,6 +24,11 @@ namespace ORNL
         return m_data.dequeue();
     }
 
+    TCPConnection *DataStream::getConnection()
+    {
+        return m_connection;
+    }
+
     void DataStream::send(const QString& msg)
     {
         emit write(msg);

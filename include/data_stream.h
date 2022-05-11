@@ -33,6 +33,10 @@ namespace ORNL
         //! \note this assumes there is a message in the queue
         QString getNextMessage();
 
+        //! \brief gets the internal TCP connection
+        //! \return a TCPConnection
+        TCPConnection* getConnection();
+
     public slots:
         //! \brief sends a message to the remote client
         //! \param msg the message to send
