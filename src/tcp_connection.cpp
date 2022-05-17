@@ -66,13 +66,11 @@ namespace ORNL
             qCritical() << "Thread is not initialized yet!";
         }else
         {
-
-            QByteArray block;
-            QDataStream out(&block, QIODevice::WriteOnly);
-            out.setVersion(QDataStream::Qt_5_10);
-
-            out << msg.toUtf8();
-            m_socket->write(block);
+            QByteArray byte_array = msg.toUtf8();
+            qint64 bytes_written = m_socket->write(byte_array);
+            qDebug() << bytes_written << "\t" << byte_array.size();
+            if (bytes_written == -1)
+                qCritical() << "An error occured during socket write.";
         }
     }
 
@@ -83,21 +81,14 @@ namespace ORNL
 
     void TCPConnection::handleNewMessages()
     {
-        QByteArray raw_msg;
-        QDataStream stream;
-        stream.setDevice(m_socket);
-        stream.setVersion(QDataStream::Qt_5_10);
-        stream.startTransaction();
+        qint64 num = m_socket->bytesAvailable();
+        char* buffer = new char[num];
+        qint64 read_bytes = m_socket->read(buffer, num);
+        qDebug() << read_bytes;
 
-        while(!stream.atEnd())
-        {
-
-            stream >> raw_msg;
-            QString message = QString::fromUtf8(raw_msg);
-            emit newMessage(message);
-            raw_msg.clear();
-        }
-        stream.commitTransaction();
+        QString message = QString::fromUtf8(buffer, read_bytes);
+        emit newMessage(message);
+        delete[] buffer;
     }
 
     QString TCPConnection::getIP()
