@@ -82,7 +82,7 @@ namespace ORNL
         void newMessage(const QString& msg);
 
         //! \brief signal that the connection request has timeout
-        void timout();
+        void timeout();
 
         //! \brief makes internal connection
         //! \note DO NOT CALL EXTERNALLY

@@ -45,7 +45,7 @@ namespace ORNL
             qWarning() << "Could not connect to server";
             delete m_socket;
             m_socket = nullptr;
-            emit timout();
+            emit timeout();
         }
     }
 
