@@ -66,11 +66,18 @@ namespace ORNL
             qCritical() << "Thread is not initialized yet!";
         }else
         {
-            QByteArray byte_array = msg.toUtf8();
-            qint64 bytes_written = m_socket->write(byte_array);
-            qDebug() << bytes_written << "\t" << byte_array.size();
-            if (bytes_written == -1)
-                qCritical() << "An error occured during socket write.";
+            if(m_socket->isWritable()) {
+                QByteArray byte_array = msg.toUtf8();
+                qint64 bytes_written = m_socket->write(byte_array);
+                m_socket->waitForBytesWritten();
+                while (m_socket->bytesToWrite())
+                    m_socket->flush();
+                m_socket->flush();
+
+                //qDebug() << bytes_written << "\t" << byte_array.size();
+                if (bytes_written == -1)
+                    qCritical() << "An error occured during socket write.";
+            }
         }
     }
 
@@ -84,7 +91,7 @@ namespace ORNL
         qint64 num = m_socket->bytesAvailable();
         char* buffer = new char[num];
         qint64 read_bytes = m_socket->read(buffer, num);
-        qDebug() << read_bytes;
+        //qDebug() << read_bytes;
 
         QString message = QString::fromUtf8(buffer, read_bytes);
         emit newMessage(message);
@@ -107,6 +114,14 @@ namespace ORNL
     {
         if(m_socket != nullptr) return m_socket->peerPort();
         else return 0;
+    }
+
+    void TCPConnection::setId(QUuid id){
+        m_id = id;
+    }
+
+    QUuid TCPConnection::getId(){
+        return m_id;
     }
 
     void TCPConnection::setupNewAsync(QString host, quint16 port)
