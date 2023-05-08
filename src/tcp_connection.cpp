@@ -38,8 +38,9 @@ namespace ORNL
 
         m_socket->connectToHost(host, port);
 
-        if (m_socket->waitForConnected(m_connection_timeout))
-            qInfo() << "Connected to server at " << host << ":" << QString::number(port);
+        if (m_socket->waitForConnected(m_connection_timeout)){
+            //qInfo() << "Connected to server at " << host << ":" << QString::number(port);
+        }
         else
         {
             qWarning() << "Could not connect to server";
@@ -66,11 +67,18 @@ namespace ORNL
             qCritical() << "Thread is not initialized yet!";
         }else
         {
-            QByteArray byte_array = msg.toUtf8();
-            qint64 bytes_written = m_socket->write(byte_array);
-            qDebug() << bytes_written << "\t" << byte_array.size();
-            if (bytes_written == -1)
-                qCritical() << "An error occured during socket write.";
+            if(m_socket->isWritable()) {
+                QByteArray byte_array = msg.toUtf8();
+                qint64 bytes_written = m_socket->write(byte_array);
+                m_socket->waitForBytesWritten();
+                while (m_socket->bytesToWrite())
+                    m_socket->flush();
+                m_socket->flush();
+
+                //qDebug() << bytes_written << "\t" << byte_array.size();
+                if (bytes_written == -1)
+                    qCritical() << "An error occured during socket write.";
+            }
         }
     }
 
@@ -84,7 +92,7 @@ namespace ORNL
         qint64 num = m_socket->bytesAvailable();
         char* buffer = new char[num];
         qint64 read_bytes = m_socket->read(buffer, num);
-        qDebug() << read_bytes;
+        //qDebug() << read_bytes;
 
         QString message = QString::fromUtf8(buffer, read_bytes);
         emit newMessage(message);
