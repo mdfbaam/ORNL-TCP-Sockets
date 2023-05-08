@@ -38,8 +38,9 @@ namespace ORNL
 
         m_socket->connectToHost(host, port);
 
-        if (m_socket->waitForConnected(m_connection_timeout))
-            qInfo() << "Connected to server at " << host << ":" << QString::number(port);
+        if (m_socket->waitForConnected(m_connection_timeout)){
+            //qInfo() << "Connected to server at " << host << ":" << QString::number(port);
+        }
         else
         {
             qWarning() << "Could not connect to server";
