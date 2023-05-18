@@ -60,6 +60,10 @@ namespace ORNL
         connect(m_socket, &QTcpSocket::readyRead, this, &TCPConnection::handleNewMessages);
     }
 
+    bool TCPConnection::isReady(){
+        return m_socket != nullptr && m_socket->isOpen() && m_socket->isWritable();
+    }
+
     void TCPConnection::write(const QString& msg)
     {
         if(m_socket == nullptr)
@@ -84,7 +88,8 @@ namespace ORNL
 
     void TCPConnection::close()
     {
-        m_socket->close();
+        if(m_socket != nullptr && m_socket->isOpen())
+            m_socket->close();
     }
 
     void TCPConnection::handleNewMessages()

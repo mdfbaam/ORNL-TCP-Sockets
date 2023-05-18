@@ -54,6 +54,10 @@ namespace ORNL
         size_t getConnectionTimeout();
 
     public slots:
+        //! \brief check if connection is ready
+        //! \param msg the string data to send
+        bool isReady();
+
         //! \brief sends data over the connection
         //! \param msg the string data to send
         void write(const QString& msg);
