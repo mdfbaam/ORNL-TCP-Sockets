@@ -38,8 +38,9 @@ namespace ORNL
 
         m_socket->connectToHost(host, port);
 
-        if (m_socket->waitForConnected(m_connection_timeout))
-            qInfo() << "Connected to server at " << host << ":" << QString::number(port);
+        if (m_socket->waitForConnected(m_connection_timeout)){
+            //qInfo() << "Connected to server at " << host << ":" << QString::number(port);
+        }
         else
         {
             qWarning() << "Could not connect to server";
@@ -57,6 +58,10 @@ namespace ORNL
         connect(m_socket, &QTcpSocket::disconnected, this, [this](){emit disconnected();});
         connect(m_socket, &QTcpSocket::errorOccurred, this, [this](QAbstractSocket::SocketError e){emit error(e);});
         connect(m_socket, &QTcpSocket::readyRead, this, &TCPConnection::handleNewMessages);
+    }
+
+    bool TCPConnection::isReady(){
+        return m_socket != nullptr && m_socket->isOpen() && m_socket->isWritable();
     }
 
     void TCPConnection::write(const QString& msg)
@@ -83,7 +88,8 @@ namespace ORNL
 
     void TCPConnection::close()
     {
-        m_socket->close();
+        if(m_socket != nullptr && m_socket->isOpen())
+            m_socket->close();
     }
 
     void TCPConnection::handleNewMessages()
