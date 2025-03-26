@@ -1,26 +1,63 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(ORNL_TCP_Sockets LANGUAGES CXX)
+project(
+    sockets
+    LANGUAGES CXX
+    VERSION 0.1
+)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_AUTOMOC ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Network REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Network)
 
 file(GLOB_RECURSE SOURCES "src/**.cpp")
 file(GLOB_RECURSE HEADERS "include/**.h")
 
-add_library(ORNL_TCP_Sockets STATIC
-  ${SOURCES}
-  ${HEADERS}
+add_library(${PROJECT_NAME})
+
+target_sources(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${SOURCES}
 )
 
-target_link_libraries(ORNL_TCP_Sockets Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
+target_sources(
+    ${PROJECT_NAME}
+    PUBLIC FILE_SET HEADERS
+    BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/include
+    FILES ${HEADERS}
+)
 
-target_compile_definitions(ORNL_TCP_Sockets PRIVATE ORNLTCPSOCKETS_LIBRARY)
+target_link_libraries(
+    ${PROJECT_NAME}
+    Qt5::Core
+    Qt5::Network
+)
 
-set(ORNL_TCP_SOCKETS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include PARENT_SCOPE)
-set(ORNL_TCP_SOCKETS_LIB ORNL_TCP_Sockets PARENT_SCOPE)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+install(
+    TARGETS  ${PROJECT_NAME}
+    EXPORT   ${PROJECT_NAME}Targets
+    FILE_SET HEADERS
+)
+install(
+    EXPORT ${PROJECT_NAME}Targets
+    NAMESPACE ornl::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)
+
+configure_package_config_file(
+    config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)
+
