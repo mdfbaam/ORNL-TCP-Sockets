@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Network)
+find_package(Qt6 REQUIRED COMPONENTS Network)
 
 file(GLOB_RECURSE SOURCES "src/**.cpp")
 file(GLOB_RECURSE HEADERS "include/**.h")
@@ -33,8 +33,8 @@ target_sources(
 
 target_link_libraries(
     ${PROJECT_NAME}
-    Qt5::Core
-    Qt5::Network
+    Qt6::Core
+    Qt6::Network
 )
 
 include(GNUInstallDirs)
